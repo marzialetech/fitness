@@ -415,22 +415,16 @@
             </div>
 
             <div class="card">
-                <h2>Supabase Connection</h2>
-                <p class="help-text">Enter your Supabase credentials to enable cloud sync. Use Clear to remove saved credentials and enter new ones.</p>
-                <div class="form-row">
-                    <label>Supabase URL</label>
-                    <input type="text" id="supabaseUrl" placeholder="https://xxx.supabase.co" autocomplete="off">
-                </div>
-                <div class="form-row">
-                    <label>Anon Key</label>
-                    <input type="password" id="supabaseKey" placeholder="Your anon key" autocomplete="off">
-                </div>
-                <div class="connection-actions">
-                    <button id="saveSupabase" class="btn primary">Connect</button>
-                    <button id="clearSupabase" class="btn">Clear</button>
-                </div>
-                <p id="connectionStatus" class="connection-status"></p>
+                <h2>Cloud Sync</h2>
+                <p class="help-text">Your data syncs automatically to the cloud. Sign in with GitHub to access your data on any device.</p>
+                <p id="connectionStatus" class="connection-status success">Connected to Supabase</p>
             </div>
+            
+            <!-- Hidden elements for backwards compatibility -->
+            <input type="hidden" id="supabaseUrl">
+            <input type="hidden" id="supabaseKey">
+            <button id="saveSupabase" class="hidden"></button>
+            <button id="clearSupabase" class="hidden"></button>
         </section>
     </div>
 

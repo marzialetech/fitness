@@ -27,17 +27,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     initEventListeners();
     initAuth();
     
-    // Try to load Supabase credentials from localStorage
-    const savedUrl = localStorage.getItem('supabaseUrl');
-    const savedKey = localStorage.getItem('supabaseKey');
-    
-    if (savedUrl && savedKey) {
-        document.getElementById('supabaseUrl').value = savedUrl;
-        document.getElementById('supabaseKey').value = savedKey;
-        // Only auto-connect if credentials don't look like placeholders
-        if (!savedUrl.includes('YOUR_') && !savedKey.includes('YOUR_')) {
-            await connectToSupabase(savedUrl, savedKey);
-        } else {
+    // Auto-connect to Supabase (credentials are hardcoded in lib/supabase.js)
+    if (window.__supabaseClient) {
+        state.isConnected = true;
+        try {
+            await loadAllData();
+        } catch (e) {
+            console.warn('Error loading from Supabase, falling back to localStorage:', e);
             loadFromLocalStorage();
         }
     } else {
