@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
- * Inlines angel-silhouette-pixelated.svg, two-figures-pixelated.svg, and logo-pixelated.svg
- * into pixel-reveal.html so the page works when opened via file:// (no server).
+ * Inlines logo (martechtext), angel-silhouette-pixelated.svg, and man on boat (two-figures-pixelated.svg).
+ * Logo at top, then ample vertical space, then man on boat (left) and angel (right) with ample horizontal gap.
+ * Page filled heartily; white bg, blue pixels. Responsive.
  * Run: node build-pixel-reveal.js
  */
 
@@ -10,16 +11,18 @@ const path = require('path');
 
 const dir = path.resolve(__dirname);
 const angelSvg = fs.readFileSync(path.join(dir, 'angel-silhouette-pixelated.svg'), 'utf8');
-const twoFigsSvg = fs.readFileSync(path.join(dir, 'two-figures-pixelated.svg'), 'utf8');
-const logoSvg = fs.readFileSync(path.join(dir, 'logo-pixelated.svg'), 'utf8');
+const manOnBoatSvg = fs.readFileSync(path.join(dir, 'two-figures-pixelated.svg'), 'utf8');
+const martechSvg = fs.readFileSync(path.join(dir, 'martechtext-pixelated.svg'), 'utf8');
+const cursorSvg = fs.readFileSync(path.join(dir, 'cursor.svg'), 'utf8');
+const cursorDataUrl = 'data:image/svg+xml,' + encodeURIComponent(cursorSvg);
 
 function stripXmlDeclaration(text) {
   return text.replace(/^\s*<\?xml[\s\S]*?\?>\s*/i, '').trim();
 }
 
 const angelInline = stripXmlDeclaration(angelSvg);
-const twoFigsInline = stripXmlDeclaration(twoFigsSvg);
-const logoInline = stripXmlDeclaration(logoSvg);
+const manOnBoatInline = stripXmlDeclaration(manOnBoatSvg);
+const martechInline = stripXmlDeclaration(martechSvg);
 
 const html = `<!DOCTYPE html>
 <html lang="en">
@@ -32,116 +35,107 @@ const html = `<!DOCTYPE html>
         body {
             margin: 0;
             min-height: 100vh;
-            background: #1a1a1a;
-            color: #e0e0e0;
+            background: #2563eb;
+            color: #fff;
             font-family: system-ui, -apple-system, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 1rem;
+            padding: 0;
+            cursor: url("${cursorDataUrl}") 8 2, auto;
         }
-        a.back {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            color: #888;
-            text-decoration: none;
-        }
-        a.back:hover { color: #fff; }
-        h1 {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #666;
-            margin-bottom: 1rem;
-        }
-        .stage {
+        .header {
+            width: 100%;
             display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
             justify-content: center;
-            align-items: flex-start;
+            padding: clamp(1.5rem, 5vw, 3rem) clamp(0.75rem, 4vw, 2rem);
         }
+        .header svg {
+            display: block;
+            width: 100%;
+            max-width: 85vw;
+            height: auto;
+            object-fit: contain;
+        }
+        .header rect,
         .stage rect {
             opacity: 0;
+            fill: currentColor;
         }
-        .figure {
-            flex: 0 0 auto;
+        .stage {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(2.5rem, 6vw, 5rem);
+            justify-items: center;
+            align-items: start;
+            width: 100%;
+            max-width: 1600px;
+            padding: clamp(7rem, 22vw, 16rem) clamp(0.75rem, 4vw, 2rem) clamp(1rem, 3vw, 2rem);
+            margin: 0 auto;
         }
-        .figure svg {
-            display: block;
-            width: min(90vw, 480px);
-            height: auto;
-        }
-        .figure span {
-            display: block;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #555;
-            margin-top: 0.5rem;
-        }
-        .controls {
-            margin-top: 2rem;
+        .stage .figure {
             display: flex;
-            gap: 1rem;
+            justify-content: center;
             align-items: center;
         }
-        button {
-            padding: 0.5rem 1rem;
-            background: #333;
-            color: #e0e0e0;
-            border: 1px solid #555;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
+        .stage .figure:nth-child(1) {
+            margin-top: clamp(5rem, 14vw, 10rem);
         }
-        button:hover { background: #444; }
-        #status { color: #666; font-size: 0.9rem; }
+        .stage .figure:nth-child(2) {
+            margin-top: 0;
+        }
+        .stage .figure svg {
+            display: block;
+            width: 100%;
+            max-width: min(95vw, 1872px);
+            height: auto;
+            object-fit: contain;
+        }
+        @media (max-width: 700px) {
+            .stage {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding-top: clamp(2rem, 5vw, 3rem);
+            }
+            .stage .figure:nth-child(1) {
+                margin-top: 0;
+            }
+        }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back">&larr; Back to Macro Tracker</a>
-    <h1>Pixel reveal (5s)</h1>
+    <header class="header" id="figMartech">
+${martechInline}
+    </header>
     <div class="stage">
-        <div class="figure" id="fig1">
+        <div class="figure" id="figManOnBoat">
+${manOnBoatInline}
+        </div>
+        <div class="figure" id="figAngel">
 ${angelInline}
-            <span>Angel silhouette</span>
         </div>
-        <div class="figure" id="fig2">
-${twoFigsInline}
-            <span>Two figures</span>
-        </div>
-        <div class="figure" id="figLogo">
-${logoInline}
-            <span>Logo</span>
-        </div>
-    </div>
-    <div class="controls">
-        <button id="replay">Replay</button>
-        <span id="status"></span>
     </div>
 
     <script>
 (function () {
     const DURATION_MS = 5000;
-    const statusEl = document.getElementById('status');
-    const replayBtn = document.getElementById('replay');
-    const fig1 = document.getElementById('fig1');
-    const fig2 = document.getElementById('fig2');
-    const figLogo = document.getElementById('figLogo');
+    const figAngel = document.getElementById('figAngel');
+    const figManOnBoat = document.getElementById('figManOnBoat');
+    const figMartech = document.getElementById('figMartech');
 
     function shuffle(arr) {
-        const a = arr.slice();
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]];
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = a[i]; a[i] = a[j]; a[j] = t;
         }
         return a;
     }
 
-    let allRects = [];
-    let revealTimes = [];
-    let animationId = null;
+    var allRects = [];
+    var revealTimes = [];
+    var animationId = null;
 
     function hideAll() {
         allRects.forEach(function (r) { r.style.opacity = '0'; });
@@ -150,38 +144,29 @@ ${logoInline}
     function runReveal() {
         if (animationId != null) cancelAnimationFrame(animationId);
         hideAll();
-        const start = performance.now();
+        for (var i = 0; i < allRects.length; i++) revealTimes[i] = (DURATION_MS * i) / allRects.length;
+        var start = performance.now();
         function tick(now) {
-            const elapsed = now - start;
+            var elapsed = now - start;
             for (var i = 0; i < allRects.length; i++) {
                 if (revealTimes[i] <= elapsed) allRects[i].style.opacity = '1';
             }
             if (elapsed < DURATION_MS) animationId = requestAnimationFrame(tick);
-            else { animationId = null; statusEl.textContent = 'Done.'; }
+            else animationId = null;
         }
-        statusEl.textContent = 'Revealing…';
         animationId = requestAnimationFrame(tick);
     }
 
     function start() {
-        var angelRects = Array.from(fig1.querySelectorAll('rect'));
-        var twoFigsRects = Array.from(fig2.querySelectorAll('rect'));
-        var logoRects = Array.from(figLogo.querySelectorAll('rect'));
-        if (angelRects.length === 0 && twoFigsRects.length === 0 && logoRects.length === 0) {
-            statusEl.textContent = 'No pixels found.';
-            return;
-        }
-        allRects = shuffle(angelRects.concat(twoFigsRects).concat(logoRects));
+        var martechRects = Array.from(figMartech.querySelectorAll('rect'));
+        var angelRects = Array.from(figAngel.querySelectorAll('rect'));
+        var manOnBoatRects = Array.from(figManOnBoat.querySelectorAll('rect'));
+        if (martechRects.length === 0 && angelRects.length === 0 && manOnBoatRects.length === 0) return;
+        allRects = shuffle(martechRects.concat(angelRects).concat(manOnBoatRects));
         revealTimes = [];
-        for (var i = 0; i < allRects.length; i++) revealTimes.push((DURATION_MS * i) / allRects.length);
-        statusEl.textContent = allRects.length + ' pixels.';
         hideAll();
         setTimeout(runReveal, 150);
     }
-
-    replayBtn.addEventListener('click', function () {
-        if (allRects.length) runReveal();
-    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', start);
@@ -195,4 +180,4 @@ ${logoInline}
 `;
 
 fs.writeFileSync(path.join(dir, 'pixel-reveal.html'), html, 'utf8');
-console.log('Wrote pixel-reveal.html (SVGs inlined). Open it directly in the browser.');
+console.log('Wrote pixel-reveal.html (logo + angel + man on boat, filled layout, ample spacing).');
